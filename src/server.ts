@@ -1,7 +1,7 @@
-import express, { Application, Request, Response } from "express";
+import app from "./app";
 
-const app: Application = express();
-const port = process.env.PORT || 5000; // The port your express server will be running on.
+ 
+ const port = process.env.PORT || 5000; // The port your express server will be running on.
 
 
 
