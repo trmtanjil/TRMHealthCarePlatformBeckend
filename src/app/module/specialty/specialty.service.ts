@@ -15,7 +15,7 @@ const getallSpecialties = async ():Promise<Specialty[]>=>{
 const deleteSpecialty = async (id:string):Promise<Specialty>=>{
     const specialty = await prisma.specialty.delete({
         where:{id}  ,
-        
+
     })
     return specialty
 }
