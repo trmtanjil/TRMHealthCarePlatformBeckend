@@ -12,7 +12,7 @@ datasource db {
   provider = "postgresql"
 }
 
-model Speciality{
+model Specialty{
 id String @id @default(uuid(7))
 
 description String? @db.Text
@@ -25,9 +25,9 @@ updatedAt DateTime @updatedAt
 isDeleted Boolean @default(false)
 deletedAt DateTime?
 
-@@index([isDeleted],name:"idx_speciality_isDeleted")
-@@index([title],name:"idx_speciality_title")
-@@map("spacialities")
+@@index([isDeleted],name:"idx_specialty_isDeleted")
+@@index([title],name:"idx_specialty_title")
+@@map("specialties")
 }
 
 

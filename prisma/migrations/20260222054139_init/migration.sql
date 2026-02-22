@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE "spacialities" (
+CREATE TABLE "specialties" (
     "id" TEXT NOT NULL,
     "description" TEXT,
     "title" VARCHAR(100) NOT NULL,
@@ -9,11 +9,11 @@ CREATE TABLE "spacialities" (
     "isDeleted" BOOLEAN NOT NULL DEFAULT false,
     "deletedAt" TIMESTAMP(3),
 
-    CONSTRAINT "spacialities_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "specialties_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
-CREATE INDEX "idx_speciality_isDeleted" ON "spacialities"("isDeleted");
+CREATE INDEX "idx_specialty_isDeleted" ON "specialties"("isDeleted");
 
 -- CreateIndex
-CREATE INDEX "idx_speciality_title" ON "spacialities"("title");
+CREATE INDEX "idx_specialty_title" ON "specialties"("title");

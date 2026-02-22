@@ -29,8 +29,8 @@ export * from "./enums"
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more Specialities
- * const specialities = await prisma.speciality.findMany()
+ * // Fetch zero or more Specialties
+ * const specialties = await prisma.specialty.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -40,7 +40,7 @@ export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts exten
 export { Prisma }
 
 /**
- * Model Speciality
+ * Model Specialty
  * 
  */
-export type Speciality = Prisma.SpecialityModel
+export type Specialty = Prisma.SpecialtyModel
