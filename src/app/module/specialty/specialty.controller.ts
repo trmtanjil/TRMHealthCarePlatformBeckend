@@ -2,12 +2,14 @@
 import { Request, Response } from "express";
 import { specialityService } from "./specialty.service";
 import { catchAsync } from "../../shared/catchAsync";
+import { sendResponse } from "../../shared/sendResponse";
 
 const createSpecialty = catchAsync(async (req:Request, res:Response)=>{
     const payload = req.body
     const result = await specialityService.createSpecialty(payload)
-    res.status(201).json({
-        success:true,
+    sendResponse(res,{
+        httpStatusCode:201,
+        success:true,   
         message:"specialty created successfully",
         data:result
     })
@@ -18,10 +20,11 @@ const createSpecialty = catchAsync(async (req:Request, res:Response)=>{
 
 const getAllSpecialties =  catchAsync(async (req:Request, res:Response)=>{
 const result = await specialityService.getallSpecialties()
-res.status(200).json({
-    success:true,
-    message:"specialties fetched successfully",
-    data:result
+sendResponse(res,{
+    httpStatusCode:200,
+    success:true, 
+    message:"specialties retrieved successfully",
+    data:result 
 })
 }
 )
@@ -29,11 +32,12 @@ res.status(200).json({
 const deleteSpecialty =  catchAsync(async (req:Request, res:Response)=>{
     const {id}= req.params
     const result = await specialityService.deleteSpecialty(id as string)
-    res.status(200).json({
-        success:true,
-        message:"specialty deleted successfully",
-        data:result
-    })  
+     sendResponse(res,({
+    httpStatusCode:200,
+    success:true,
+    message:"specialty deleted successfully",
+    data:result}))  
+     
 })
 
 const updateSpecialty = catchAsync(async (req:Request, res:Response)=>{
@@ -41,13 +45,13 @@ const updateSpecialty = catchAsync(async (req:Request, res:Response)=>{
         const payload = req.body
         console.log(payload)
          const result = await specialityService.updateSpecialty(id as string, payload)
-        res.status(200).json({
-            success:true,
+        sendResponse(res,{
+            httpStatusCode:200,
+            success:true,   
             message:"specialty updated successfully",
             data:result
         })
-    } 
-)
+})
 export const specialityController={
     createSpecialty,
     getAllSpecialties,
