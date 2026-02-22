@@ -10,8 +10,7 @@ const bootstrap = async () => {
     // Start the server
     app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
-      console.log(process.env.DATABASE_URL)
-   });
+    });
  } catch (error) {
    console.error("Error starting the server:", error);
  }
