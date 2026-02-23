@@ -1,4 +1,5 @@
- import { auth } from "../../lib/auth";
+ import { UserStatus } from "../../../generated/prisma/enums";
+import { auth } from "../../lib/auth";
  
 interface RegisterPatientPayload {
     name: string;
@@ -8,9 +9,6 @@ interface RegisterPatientPayload {
 
 const registerPatient = async (payload:RegisterPatientPayload) => {
     const {name, email, password} = payload;
-    // Example logic for registering a patient
-    console.log("Registering patient:", name, email);
-    // Here you would typically interact with your database to create a new user record
 
     const data = await auth.api.signUpEmail({
         body:{
@@ -34,6 +32,29 @@ const registerPatient = async (payload:RegisterPatientPayload) => {
     return data
 }
 
+interface LoginUserPayload {
+    email: string;
+    password: string;
+}
+
+const loginUser= async(payload:LoginUserPayload) => {
+    const {email, password} = payload;
+    const data= await auth.api.signInEmail({
+        body:{
+            email,
+            password
+        }
+    })
+    if(data.user.status ===UserStatus.BLOCKED){
+        throw new Error("Your account is blocked. Please contact support.");
+    }
+    if(data.user.isDeleted || data.user.status === UserStatus.DELETED){
+        throw new Error("Your account has been deleted. Please contact support.");
+    }
+    return data
+}
+
 export const authServices = {
-    registerPatient
+    registerPatient,
+    loginUser
 }

@@ -13,41 +13,40 @@ import { Role, UserStatus } from "../../generated/prisma/enums";
     },
     user: {
         additionalFields: {
-            name: {
-                type: "string",     
+              role: {
+                type: "string",
                 required: true,
-                defaultValue:Role.PATIENT
+                defaultValue: Role.PATIENT
             },
-           status: {
-            type:"string",
-            required:true,
-            defaultValue:UserStatus.ACTIVE
-           },
-           role:{
-            type:"string",
-            required:true,
-            defaultValue:Role.PATIENT
-           },
-              needPasswordChange:{
-                type:"boolean",
-                required:true,
-                defaultValue:false
-              },
-                isDeleted:{
-                    type:"boolean",
-                    required:true,
-                    defaultValue:false
-                },
-                deletedAt:{
-                    type:"date",
-                    required:false,
-                    defaultValue:null
-                }
+
+            status: {
+                type: "string",
+                required: true,
+                defaultValue: UserStatus.ACTIVE
+            },
+
+            needPasswordChange: {
+                type: "boolean",
+                required: true,
+                defaultValue: false
+            },
+
+            isDeleted: {
+                type: "boolean",
+                required: true,
+                defaultValue: false
+            },
+
+            deletedAt: {
+                type: "date",
+                required: false,
+                defaultValue: null
+            },
     }
  },
  trustedOrigins:[process.env.BETTER_AUTH_URL || "http://localhost:5000"],
 
- advanced:{
-    disableCSRFCheck: true, // Disable CSRF check for development purposes. Make sure to enable it in production!
- }
+//  advanced:{
+//     disableCSRFCheck: true, // Disable CSRF check for development purposes. Make sure to enable it in production!
+//  }
 });
