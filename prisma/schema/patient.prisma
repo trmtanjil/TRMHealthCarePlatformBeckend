@@ -2,9 +2,9 @@ model Patient {
   id            String    @id @default(uuid()) // Primary Key
   name          String
   email         String    @unique             // Unique constraint
-  contactNumber String
+  contactNumber String?
   image         String?                       // Optional হতে পারে যদি শুরুতে না থাকে
-  address       String                        // আপনার ইমেজে "adress" আছে, স্পেলিং ঠিক করে "address" দেওয়া ভালো
+  address       String  ?                      // আপনার ইমেজে "adress" আছে, স্পেলিং ঠিক করে "address" দেওয়া ভালো
   isDeleted     Boolean   @default(false)
   deletedAt     DateTime?                     // ডিলিট না হওয়া পর্যন্ত এটি null থাকবে
   createdAt     DateTime  @default(now())
@@ -16,6 +16,8 @@ model Patient {
  user User @relation(fields: [userId], references: [id],onDelete: Cascade,onUpdate: Cascade)
 
 
+  @@index([email], name: "idx_patient_email") // ইমেইল ফিল্ডে ইনডেক্স তৈরি করা
+  @@index([isDeleted], name: "idx_patient_isDeleted") // isDeleted ফিল্ডে ইনডেক্স তৈরি করা
  
-//   @@map("patients") // ডাটাবেস টেবিলের নাম 'patients' রাখার জন্য
+  @@map("patient") // ডাটাবেস টেবিলের নাম 'patients' রাখার জন্য
 }

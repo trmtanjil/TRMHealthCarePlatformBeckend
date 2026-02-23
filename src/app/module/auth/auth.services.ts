@@ -1,10 +1,12 @@
  import { UserStatus } from "../../../generated/prisma/enums";
 import { auth } from "../../lib/auth";
+import { prisma } from "../../lib/prisma";
  
 interface RegisterPatientPayload {
     name: string;
     email: string;
     password: string;
+    userId: string;
 }
 
 const registerPatient = async (payload:RegisterPatientPayload) => {
@@ -25,11 +27,18 @@ const registerPatient = async (payload:RegisterPatientPayload) => {
     }
 
     //create patient profile transection after signup patint of user
-    // const patient = await prisma.$transaction(async (tx) => {
-        
-    // } 
+    const patient = await prisma.$transaction(async (tx) => {
+      const patientTx=   await tx.patient.create({
+            data:{
+                userId: data.user.id ,
+                name:payload.name,
+                email:payload.email,
+             }
+        })
+        return patientTx;
+    } )
 
-    return data
+    return {...data, patient}
 }
 
 interface LoginUserPayload {
