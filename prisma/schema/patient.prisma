@@ -1,0 +1,21 @@
+model Patient {
+  id            String    @id @default(uuid()) // Primary Key
+  name          String
+  email         String    @unique             // Unique constraint
+  contactNumber String
+  image         String?                       // Optional হতে পারে যদি শুরুতে না থাকে
+  address       String                        // আপনার ইমেজে "adress" আছে, স্পেলিং ঠিক করে "address" দেওয়া ভালো
+  isDeleted     Boolean   @default(false)
+  deletedAt     DateTime?                     // ডিলিট না হওয়া পর্যন্ত এটি null থাকবে
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  //reletionship
+
+ userId String @unique
+ user User @relation(fields: [userId], references: [id],onDelete: Cascade,onUpdate: Cascade)
+
+
+ 
+//   @@map("patients") // ডাটাবেস টেবিলের নাম 'patients' রাখার জন্য
+}
