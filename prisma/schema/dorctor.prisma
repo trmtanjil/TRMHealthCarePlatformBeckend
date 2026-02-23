@@ -1,0 +1,34 @@
+model Doctor{
+    id            String    @id @default(uuid(7)) // Primary Key
+    name          String
+    email         String    @unique             // Unique constraint    
+    profilePhoto   String?                       // Optional হতে পারে যদি শুরুতে না থাকে
+    contactNumber String?
+    address       String?   
+    
+    registrationNumber String? @unique
+     experience         Int?
+    gender      Gender?
+    appointmentFee       Float?
+    qualification       String?
+    currentWorkplace     String?
+     designation          String?
+     averageRating         Float? @default(0.0)
+     isDeleted     Boolean   @default(false) 
+    deletedAt     DateTime?      
+    
+     createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt
+
+    // reletionship
+
+specialties DoctorSpecialty[]
+
+    userId String @unique
+    user User @relation(fields: [userId], references: [id],onDelete: Cascade,onUpdate: Cascade)
+
+    @@index([email], name: "idx_doctor_email") // ইমেইল ফিল্ডে ইনডেক্স তৈরি করা
+    @@index([isDeleted], name: "idx_doctor_isDeleted") // isDeleted ফিল্ডে ইনডেক্স তৈরি করা
+    @@map("doctor") // ডাটাবেস টেবিলের নাম 'doctors' রাখার জন্য
+}
+
