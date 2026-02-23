@@ -27,18 +27,29 @@ const registerPatient = async (payload:RegisterPatientPayload) => {
     }
 
     //create patient profile transection after signup patint of user
-    const patient = await prisma.$transaction(async (tx) => {
+  try{
+  const patient = await prisma.$transaction(async (tx) => {
       const patientTx=   await tx.patient.create({
             data:{
                 userId: data.user.id ,
                 name:payload.name,
                 email:payload.email,
              }
-        })
-        return patientTx;
-    } )
+            })
+            return patientTx;
+        } )
+        return {...data, patient}
 
-    return {...data, patient}
+  }catch(error){
+    console.log("transection error",error)
+    await prisma.user.delete({
+        where:{
+            id:data.user.id
+        }
+    })
+    throw error;
+    }
+
 }
 
 interface LoginUserPayload {

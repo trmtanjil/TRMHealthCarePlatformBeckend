@@ -6,12 +6,7 @@ export const catchAsync=(fn:RequestHandler)=>{
         try{
             await fn(req,res,next)
         }catch(error:any){
-        console.log(error)
-        res.status(400).json({
-            success:false,
-            message:"failed to retrieve specialties",
-            error:error.message
-        })
+        next(error)
     }  
     } 
 }

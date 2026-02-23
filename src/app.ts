@@ -1,7 +1,8 @@
 import express, { Application, Request, Response } from "express";
 import { prisma } from "./app/lib/prisma";
 import { IndexRoutes } from "./app/routes";
-  
+import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
+   
 const app:Application = express();
  // Enable URL-encoded form data parsing
 app.use(express.urlencoded({ extended: true }));
@@ -25,5 +26,9 @@ app.get('/',async (req: Request, res: Response) => {
     data:speciality
   });
 });
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+app.use(globalErrorHandler as any);
 
 export default app;
