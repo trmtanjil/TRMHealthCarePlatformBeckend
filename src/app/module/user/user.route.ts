@@ -5,4 +5,4 @@ const router = Router()
 
 router.post("/create-doctor", userController.createDoctor)
 
-export const userRoute = router
+export const userRoutes = router
