@@ -6,7 +6,7 @@ import { z } from "zod";
 const createDoctorZodSchema =z.object( {
     password:z.string("Password is required").min(6,"Password must be at least 6 characters").max(20,"Password must be less than 50 characters"),
 
-    doctor:z.object({
+    docotor:z.object({
         name:z.string("Name is required").min(3,"Name must be at least 3 characters").max(50,"Name must be less than 50 characters"),
 
         email:z.string("Email is required"),
@@ -40,6 +40,15 @@ const createDoctorZodSchema =z.object( {
 const router = Router()
  
 router.post("/create-doctor",(req:Request,res:Response,next:NextFunction)=>{
-    }, userController.createDoctor)
+    const parsedResult = createDoctorZodSchema.safeParse(req.body)
+ 
+    if(!parsedResult.success){
+        next(parsedResult.error)
+    }
+    //senitizing the data
+    req.body = parsedResult.data
+    next()
+ 
+}, userController.createDoctor)
 
 export const userRoutes = router
