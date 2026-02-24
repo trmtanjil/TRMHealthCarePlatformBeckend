@@ -11,11 +11,12 @@ const registerPatient = catchAsync(
 
         const result = await authServices.registerPatient(payload);
 
-            const {accessToken, refreshToken, token, ...rest}= result;
+      
+  const { accessToken, refreshToken, token, ...rest } = result;
 
-        tokenUtils.setAccessTokenCookie(res,accessToken);
-        tokenUtils.setRefreshTokenCookie(res,refreshToken);
-        tokenUtils.setBetterAuthSessionCookie(res,token as string)
+  tokenUtils.setAccessTokenCookie(res, accessToken);
+  tokenUtils.setRefreshTokenCookie(res, refreshToken); // ⭐ THIS LINE
+  tokenUtils.setBetterAuthSessionCookie(res, token as string);
 
 
          sendResponse(res, {
