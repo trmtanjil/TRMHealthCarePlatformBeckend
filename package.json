@@ -30,7 +30,8 @@
     "express": "^5.2.1",
     "http-status": "^2.1.0",
     "migrate": "^2.1.0",
-    "reset": "^0.1.0"
+    "reset": "^0.1.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

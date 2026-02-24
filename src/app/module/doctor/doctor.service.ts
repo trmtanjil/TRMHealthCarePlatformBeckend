@@ -65,8 +65,39 @@ const updateDoctor = async (id: string, payload: any): Promise<any> => {
     });
 };
 
+const deleteDoctor = async (id: string) => {
+    return await prisma.$transaction(async (tx) => {
+        // ১. প্রথমে ডক্টর ডাটাটি খুঁজে বের করা যেন তার 'userId' পাওয়া যায়
+        const doctorInfo = await tx.doctor.findUnique({
+            where: { id }
+        });
+
+        if (!doctorInfo) {
+            throw new Error("Doctor not found!");
+        }
+
+        // ২. ডক্টর স্পেশালিটি ডিলিট করা (যদি আপনার স্কিমাতে Cascade না থাকে)
+        await tx.doctorSpecialty.deleteMany({
+            where: { doctorId: id }
+        });
+
+        // ৩. ডক্টর টেবিল থেকে ডিলিট করা
+        const deletedDoctor = await tx.doctor.delete({
+            where: { id }
+        });
+
+        // ৪. সবশেষে ইউজার টেবিল থেকে ডিলিট করা
+        await tx.user.delete({
+            where: { id: doctorInfo.userId }
+        });
+
+        return deletedDoctor;
+    });
+};
+
 export const doctorService = {
     getAllDoctors,
     getDoctorById,
-    updateDoctor
+    updateDoctor,
+    deleteDoctor
 }

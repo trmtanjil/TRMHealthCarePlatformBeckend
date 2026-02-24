@@ -27,7 +27,8 @@ const updateSpecialty = async (id:string, payload:Partial<Specialty>):Promise<Sp
     })
     return specialty    
 }
-export const specialityService={
+
+ export const specialityService={
     createSpecialty,
     getallSpecialties,
     deleteSpecialty,
