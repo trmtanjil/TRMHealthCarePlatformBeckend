@@ -1,9 +1,10 @@
 import express, { Application, Request, Response } from "express";
-import { prisma } from "./app/lib/prisma";
-import { IndexRoutes } from "./app/routes";
+ import { IndexRoutes } from "./app/routes";
 import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
 import { notFound } from "./app/middleware/notFound";
 import cors from "cors";
+import AppError from "./app/errorHelpers/AppError";
+import status from "http-status";
    
 const app:Application = express();
 
@@ -25,15 +26,14 @@ app.use(express.json());
 app.use("/api/v1", IndexRoutes)
 // Basic route
 app.get('/',async (req: Request, res: Response) => {
-  const speciality = await prisma.specialty.create({
-    data:{
-      title:"this is trm health care title"
-    }
-  })
+ 
+throw new AppError(status.BAD_REQUEST, "just tasting error handle ")
+
+
   res.status(201).json({
     success:true,
     message:"api is working",
-    data:speciality
+    
   });
 });
 

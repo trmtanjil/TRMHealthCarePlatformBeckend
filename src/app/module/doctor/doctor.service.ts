@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
- import { prisma } from "../../lib/prisma"
+ import status from "http-status"
+import AppError from "../../errorHelpers/AppError"
+import { prisma } from "../../lib/prisma"
 
 const getAllDoctors = async ()=>{
     const doctors = await prisma.doctor.findMany({
@@ -73,7 +75,7 @@ const deleteDoctor = async (id: string) => {
         });
 
         if (!doctorInfo) {
-            throw new Error("Doctor not found!");
+            throw new AppError(status.NOT_FOUND,"Doctor not found!");
         }
 
         // ২. ডক্টর স্পেশালিটি ডিলিট করা (যদি আপনার স্কিমাতে Cascade না থাকে)
