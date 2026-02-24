@@ -3,6 +3,7 @@ import { UserStatus } from "../../../generated/prisma/enums";
 import AppError from "../../errorHelpers/AppError";
 import { auth } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
+import { tokenUtils } from "../../utils/token";
  
 interface RegisterPatientPayload {
     name: string;
@@ -41,7 +42,30 @@ const registerPatient = async (payload:RegisterPatientPayload) => {
             })
             return patientTx;
         } )
-        return {...data, patient}
+
+            const accessToken = tokenUtils.getAccesToken({
+        userId : data.user.id,
+        role :data.user.role,
+        name:data.user.name,
+        email:data.user.email,
+        status:data.user.status,
+        isDelate:data.user.isDeleted,
+        emailVarified:data.user.emailVerified
+    });
+    const refreshToken = tokenUtils.getRefreshToken({
+        userId : data.user.id,
+        role :data.user.role,
+        name:data.user.name,
+        email:data.user.email,
+        status:data.user.status,
+        isDelate:data.user.isDeleted,
+        emailVarified:data.user.emailVerified
+    });
+
+        return {...data, 
+             patient,
+            accessToken,
+            refreshToken}
 
   }catch(error){
     console.log("transection error",error)
@@ -74,7 +98,31 @@ const loginUser= async(payload:LoginUserPayload) => {
     if(data.user.isDeleted || data.user.status === UserStatus.DELETED){
         throw new AppError(status.NOT_FOUND,"Your account has been deleted. Please contact support.");
     }
-    return data
+
+    const accessToken = tokenUtils.getAccesToken({
+        userId : data.user.id,
+        role :data.user.role,
+        name:data.user.name,
+        email:data.user.email,
+        status:data.user.status,
+        isDelate:data.user.isDeleted,
+        emailVarified:data.user.emailVerified
+    });
+    const refreshToken = tokenUtils.getRefreshToken({
+        userId : data.user.id,
+        role :data.user.role,
+        name:data.user.name,
+        email:data.user.email,
+        status:data.user.status,
+        isDelate:data.user.isDeleted,
+        emailVarified:data.user.emailVerified
+    });
+
+    return {
+        ...data,
+        accessToken,
+        refreshToken
+    }
 }
 
 export const authServices = {
