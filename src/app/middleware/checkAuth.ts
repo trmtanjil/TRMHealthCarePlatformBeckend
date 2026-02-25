@@ -66,6 +66,7 @@ export const checkAuth = (...authRoles: Role[]) => async (req: Request, res: Res
                     role : user.role,
                     email : user.email,
                 }
+                console.log("user from check auth",user)
             }
 
             const accessToken = cookieUtils.getCookie(req, 'accessToken');

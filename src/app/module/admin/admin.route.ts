@@ -17,7 +17,7 @@ router.patch("/:id",
     checkAuth(Role.SUPER_ADMIN,Role.ADMIN),
     validateRequst(updateAdminZodSchema), AdminController.updateAdmin);
 router.delete("/:id",
-     
+    checkAuth(Role.SUPER_ADMIN,Role.ADMIN),
     AdminController.deleteAdmin);
 
 export const AdminRoutes = router;
