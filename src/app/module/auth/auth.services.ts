@@ -195,23 +195,25 @@ const getNewToken = async(refreshToken:string, sessionToken:string)=>{
     };
     const data = verifiedRefreshToken.data as JwtPayload
 
+    console.log({data})
+
        const newaccessToken = tokenUtils.getAccesToken({
-        userId : data.user.id,
-        role :data.user.role,
-        name:data.user.name,
-        email:data.user.email,
-        status:data.user.status,
-        isDelate:data.user.isDeleted,
-        emailVarified:data.user.emailVerified
+        userId : data.userId,
+        role :data.role,
+        name:data.name,
+        email:data.email,
+        status:data.status,
+        isDelate:data.isDeleted,
+        emailVarified:data.emailVerified
     });
     const newrefreshToken = tokenUtils.getRefreshToken({
-        userId : data.user.id,
-        role :data.user.role,
-        name:data.user.name,
-        email:data.user.email,
-        status:data.user.status,
-        isDelate:data.user.isDeleted,
-        emailVarified:data.user.emailVerified
+        userId : data.id,
+        role :data.role,
+        name:data.name,
+        email:data.email,
+        status:data.status,
+        isDelate:data.isDeleted,
+        emailVarified:data.emailVerified
     });
     return {
         accessToken :newaccessToken,
