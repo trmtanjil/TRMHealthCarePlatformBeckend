@@ -1,7 +1,26 @@
 export interface IUpdateDoctorPayload {
-    name?: string;
-   profilephoto?: string;
-   contractnumber?: string;
-   adress?: string;
-   exprience?: number;
+  name?: string;
+  profilePhoto?: string;
+  contactNumber?: string;
+  registrationNumber?: string;
+  experience?: number;
+  gender?: string;
+  appointmentFee?: number;
+  qualification?: string;
+  currentWorkingPlace?: string;
+  designation?: string;
+  specialties?: string[]; 
+}
+export interface IUpdateDoctor {
+  name?: string;
+  profilePhoto?: string;
+  contactNumber?: string;
+  registrationNumber?: string;
+  experience?: number;
+  gender?: string;
+  appointmentFee?: number;
+  qualification?: string;
+  currentWorkingPlace?: string;
+  designation?: string;
+  specialties?: string[]; // Array of specialty IDs to update
 }
