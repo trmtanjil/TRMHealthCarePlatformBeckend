@@ -21,6 +21,7 @@ model User {
 // reletionship
   patient Patient?
   doctor Doctor?
+    admin              Admin?
 
   
   @@unique([email])
