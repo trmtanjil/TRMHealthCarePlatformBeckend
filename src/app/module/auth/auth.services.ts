@@ -5,6 +5,9 @@ import { auth } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
 import { tokenUtils } from "../../utils/token";
 import { IRequestUser } from "../../interfaces/requestUser.interface";
+ import { jwtUtils } from "../../utils/jwt";
+import { envVars } from "../../config/env";
+import { JwtPayload } from "jsonwebtoken";
  
 interface RegisterPatientPayload {
     name: string;
@@ -158,8 +161,69 @@ const getMe = async(user:IRequestUser)=>{
     return isUserExist
 }
 
+
+const getNewToken = async(refreshToken:string, sessionToken:string)=>{
+
+    const isSessionTokenExist = await prisma.session.findUnique({
+        where:{
+            token:sessionToken
+        },
+        include:{
+            user:true
+        }
+    })
+    
+    if (!isSessionTokenExist){
+        throw new AppError(status.UNAUTHORIZED,"invelid session token")
+    }
+
+    const {token} = await prisma.session.update({
+        where:{
+            token:sessionToken
+        },
+        data:{
+            token:sessionToken,
+            expiresAt:new Date(Date.now()+60*60*60*24*1000),
+            updatedAt:new Date()
+        }
+    })
+
+    const verifiedRefreshToken = jwtUtils.verifyToken(refreshToken,envVars.REFRESH_TOKEN_SECRET);
+
+    if(!verifiedRefreshToken.message && verifiedRefreshToken.error){
+        throw new AppError(status.UNAUTHORIZED,"Invelide refresh token");
+    };
+    const data = verifiedRefreshToken.data as JwtPayload
+
+       const newaccessToken = tokenUtils.getAccesToken({
+        userId : data.user.id,
+        role :data.user.role,
+        name:data.user.name,
+        email:data.user.email,
+        status:data.user.status,
+        isDelate:data.user.isDeleted,
+        emailVarified:data.user.emailVerified
+    });
+    const newrefreshToken = tokenUtils.getRefreshToken({
+        userId : data.user.id,
+        role :data.user.role,
+        name:data.user.name,
+        email:data.user.email,
+        status:data.user.status,
+        isDelate:data.user.isDeleted,
+        emailVarified:data.user.emailVerified
+    });
+    return {
+        accessToken :newaccessToken,
+        refreshToken:newrefreshToken,
+        sessionToken:token
+    }
+    
+}
+
 export const authServices = {
     registerPatient,
     loginUser,
-    getMe
+    getMe,
+    getNewToken
 }
