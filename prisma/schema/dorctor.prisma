@@ -23,6 +23,10 @@ model Doctor{
     // reletionship
 
 specialties DoctorSpecialty[]
+appointments    Appointment[]
+  doctorSchedules DoctorSchedules[]
+  reviews         Review[]
+   prescriptions   Prescription[]
 
     userId String @unique
     user User @relation(fields: [userId], references: [id],onDelete: Cascade,onUpdate: Cascade)

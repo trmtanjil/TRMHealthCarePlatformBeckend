@@ -20,3 +20,14 @@ export interface ICreateDoctorPayload{
  specialties:string[]; // স্পেশালিটি গুলোর নামের অ্যারে
 
 } 
+
+export interface ICreateAdminPayload {
+    password: string;
+    admin: {
+        name: string;
+        email: string;
+        profilePhoto?: string;
+        contactNumber?: string;
+    }
+    role: "ADMIN" | "SUPER_ADMIN";
+}

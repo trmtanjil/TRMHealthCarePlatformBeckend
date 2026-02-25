@@ -11,7 +11,11 @@ model Patient {
   updatedAt     DateTime  @updatedAt
 
   //reletionship
-
+  appointments      Appointment[]
+   medicalReports    MedicalReport[]
+     patientHealthData PatientHealthData?
+     reviews         Review[]
+      prescriptions     Prescription[]
  userId String @unique
  user User @relation(fields: [userId], references: [id],onDelete: Cascade,onUpdate: Cascade)
 

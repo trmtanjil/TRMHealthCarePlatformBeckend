@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import status from "http-status";
 import { Role, Specialty } from "../../../generated/prisma/client";
 import { auth } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
-import { ICreateDoctorPayload } from "./user.interface";
+import {   ICreateDoctorPayload } from "./user.interface";
 import AppError from "../../errorHelpers/AppError";
  
 const createDoctor = async (payload: ICreateDoctorPayload) => {
@@ -124,6 +125,15 @@ return result
 
 }
 
+
+
+
+
+
+
+
+
 export const UserService = {
-    createDoctor
+    createDoctor,
+     
 }
