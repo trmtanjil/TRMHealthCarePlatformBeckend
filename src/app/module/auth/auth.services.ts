@@ -8,13 +8,9 @@ import { IRequestUser } from "../../interfaces/requestUser.interface";
  import { jwtUtils } from "../../utils/jwt";
 import { envVars } from "../../config/env";
 import { JwtPayload } from "jsonwebtoken";
+import { IChangePasswordPayload, LoginUserPayload, RegisterPatientPayload } from "./auth.interfech";
  
-interface RegisterPatientPayload {
-    name: string;
-    email: string;
-    password: string;
-    userId: string;
-}
+
 
 const registerPatient = async (payload:RegisterPatientPayload) => {
     const {name, email, password} = payload;
@@ -83,10 +79,7 @@ const registerPatient = async (payload:RegisterPatientPayload) => {
 
 }
 
-interface LoginUserPayload {
-    email: string;
-    password: string;
-}
+
 
 const loginUser= async(payload:LoginUserPayload) => {
     const {email, password} = payload;
@@ -172,7 +165,7 @@ const getNewToken = async(refreshToken:string, sessionToken:string)=>{
             user:true
         }
     })
-    
+     
     if (!isSessionTokenExist){
         throw new AppError(status.UNAUTHORIZED,"invelid session token")
     }
@@ -195,7 +188,6 @@ const getNewToken = async(refreshToken:string, sessionToken:string)=>{
     };
     const data = verifiedRefreshToken.data as JwtPayload
 
-    console.log({data})
 
        const newaccessToken = tokenUtils.getAccesToken({
         userId : data.userId,
@@ -223,9 +215,62 @@ const getNewToken = async(refreshToken:string, sessionToken:string)=>{
     
 }
 
+const changePassword = async(payload:IChangePasswordPayload,sessionToken :string)=>{
+    const session = await auth.api.getSession({
+        headers : new Headers({
+            Authorization : `Bearer ${sessionToken}`
+        })
+    })
+    console.log(session)
+    if(!session){
+        throw new AppError(status.UNAUTHORIZED,"session token is invelide")
+    }
+
+    const {currentPassword, newPassword}=payload;
+
+    const result = await auth.api.changePassword({
+        body:{
+            currentPassword,
+            newPassword,
+            revokeOtherSessions:true
+        },
+        headers:new Headers({
+            Authorization :`Bearer ${sessionToken}`
+        })
+    })
+
+      const accessToken = tokenUtils.getAccesToken({
+        userId: session.user.id,
+        role: session.user.role,
+        name: session.user.name,
+        email: session.user.email,
+        status: session.user.status,
+        isDeleted: session.user.isDeleted,
+        emailVerified: session.user.emailVerified,
+    });
+
+    const refreshToken = tokenUtils.getRefreshToken({
+        userId: session.user.id,
+        role: session.user.role,
+        name: session.user.name,
+        email: session.user.email,
+        status: session.user.status,
+        isDeleted: session.user.isDeleted,
+        emailVerified: session.user.emailVerified,
+    });
+    return {
+        ...result,
+        accessToken,
+        refreshToken
+    }
+
+}
+ 
+
 export const authServices = {
     registerPatient,
     loginUser,
     getMe,
-    getNewToken
+    getNewToken,
+    changePassword
 }
