@@ -2,7 +2,8 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
 import { Role, UserStatus } from "../../generated/prisma/enums";
-import { bearer } from "better-auth/plugins";
+import { bearer, emailOTP } from "better-auth/plugins";
+import { sendEmail } from "../utils/email";
  
  // If your Prisma file is located elsewhere, you can change the path
  
@@ -12,7 +13,16 @@ import { bearer } from "better-auth/plugins";
     }),
     emailAndPassword: {
         enabled: true,
+         requireEmailVerification: true,
     },
+
+
+        emailVerification:{
+        sendOnSignUp: true,
+        sendOnSignIn: true,
+        autoSignInAfterVerification: true,
+    },
+
     user: {
         additionalFields: {
               role: {
@@ -47,9 +57,73 @@ import { bearer } from "better-auth/plugins";
     }
  },
 
- plugins:[
-    bearer()
- ],
+//  plugins:[
+//     bearer(),
+//     emailOTP({
+//         overrideDefaultEmailVerification:true,
+//         async sendVerificationOTP({email,otp,type}){
+//             if(type === "email-verification"){
+//                 const user = await prisma.user.findUnique({
+//                     where:{
+//                         email,
+//                     }
+//                 })
+//                 if(user && !user.emailVerified){
+//                      sendEmail({
+//                         to:email,
+//                         subject:"verify you email",
+//                         templateName:"otp",
+//                         templateData:{
+//                             name:user.name,
+//                             otp
+//                         }
+//                     })
+//                 }
+//             }
+//         },
+//         expiresIn:2*60,
+//         otpLength:6,
+
+//     })
+//  ],
+
+
+  plugins: [
+        bearer(),
+        emailOTP({
+            overrideDefaultEmailVerification: true,
+            async sendVerificationOTP({email, otp, type}) {
+                if(type === "email-verification"){
+                  const user = await prisma.user.findUnique({
+                    where : {
+                        email,
+                    }
+                  })
+
+                   if(!user){
+                    console.error(`User with email ${email} not found. Cannot send verification OTP.`);
+                    return;
+                   }
+
+               
+                  
+                    if (user && !user.emailVerified){
+                    sendEmail({
+                        to : email,
+                        subject : "Verify your email",
+                        templateName : "otp",
+                        templateData :{
+                            name : user.name,
+                            otp,
+                        }
+                    })
+                  }
+                } 
+            },
+            expiresIn : 2 * 60, // 2 minutes in seconds
+            otpLength : 6,
+        })
+    ],
 
  session:{
     expiresIn:  60*60*60*24,
