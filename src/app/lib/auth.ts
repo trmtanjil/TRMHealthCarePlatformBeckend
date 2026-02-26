@@ -57,35 +57,7 @@ import { sendEmail } from "../utils/email";
     }
  },
 
-//  plugins:[
-//     bearer(),
-//     emailOTP({
-//         overrideDefaultEmailVerification:true,
-//         async sendVerificationOTP({email,otp,type}){
-//             if(type === "email-verification"){
-//                 const user = await prisma.user.findUnique({
-//                     where:{
-//                         email,
-//                     }
-//                 })
-//                 if(user && !user.emailVerified){
-//                      sendEmail({
-//                         to:email,
-//                         subject:"verify you email",
-//                         templateName:"otp",
-//                         templateData:{
-//                             name:user.name,
-//                             otp
-//                         }
-//                     })
-//                 }
-//             }
-//         },
-//         expiresIn:2*60,
-//         otpLength:6,
-
-//     })
-//  ],
+  
 
 
   plugins: [
@@ -118,7 +90,24 @@ import { sendEmail } from "../utils/email";
                         }
                     })
                   }
-                } 
+                } else if(type ==="forget-password"){
+                    const user =await prisma.user.findUnique({
+                        where:{
+                            email
+                        }
+                    })
+                    if(user){
+                        sendEmail({
+                            to:email,
+                            subject:"password reset otp",
+                            templateName:"otp",
+                            templateData:{
+                                name:user.name,
+                                otp
+                            }
+                        })
+                    }
+                }
             },
             expiresIn : 2 * 60, // 2 minutes in seconds
             otpLength : 6,
