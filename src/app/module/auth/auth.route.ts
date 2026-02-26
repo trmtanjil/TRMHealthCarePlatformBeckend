@@ -13,6 +13,6 @@ router.post("/change-password",checkAuth(Role.ADMIN,Role.DOCTOR,Role.PATIENT,Rol
 router.post("/logout",checkAuth(Role.ADMIN,Role.DOCTOR,Role.PATIENT,Role.SUPER_ADMIN), authController.logOutUser)
 router.post("/email-verify", authController.verifyEmail)
 router.post("/forget-password", authController.forgetPassword)
-router.post("/reset-password", authController.registerPatient)
+router.post("/reset-password", authController.resetPassword)
 
 export const authRoute = router

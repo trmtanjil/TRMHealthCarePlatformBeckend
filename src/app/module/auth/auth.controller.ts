@@ -176,7 +176,8 @@ const verifyEmail = catchAsync(
 
 const forgetPassword = catchAsync(
     async (req: Request, res: Response) => {
-        const { email } = req.body;
+        const  {email}  = req.body;
+        console.log(email)
         await authServices.forgetPassword(email);
 
         sendResponse(res, {

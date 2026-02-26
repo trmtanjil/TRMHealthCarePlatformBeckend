@@ -60,7 +60,7 @@ import { sendEmail } from "../utils/email";
   
 
 
-  plugins: [
+ plugins: [
         bearer(),
         emailOTP({
             overrideDefaultEmailVerification: true,
@@ -77,7 +77,10 @@ import { sendEmail } from "../utils/email";
                     return;
                    }
 
-               
+                   if(user && user.role === Role.SUPER_ADMIN){
+                    console.log(`User with email ${email} is a super admin. Skipping sending verification OTP.`);
+                    return;
+                   }
                   
                     if (user && !user.emailVerified){
                     sendEmail({
@@ -90,20 +93,21 @@ import { sendEmail } from "../utils/email";
                         }
                     })
                   }
-                } else if(type ==="forget-password"){
-                    const user =await prisma.user.findUnique({
-                        where:{
-                            email
+                }else if(type === "forget-password"){
+                    const user = await prisma.user.findUnique({
+                        where : {
+                            email,
                         }
                     })
+
                     if(user){
                         sendEmail({
-                            to:email,
-                            subject:"password reset otp",
-                            templateName:"otp",
-                            templateData:{
-                                name:user.name,
-                                otp
+                            to : email,
+                            subject : "Password Reset OTP",
+                            templateName : "otp",
+                            templateData :{
+                                name : user.name,
+                                otp,
                             }
                         })
                     }

@@ -221,7 +221,6 @@ const changePassword = async(payload:IChangePasswordPayload,sessionToken :string
             Authorization : `Bearer ${sessionToken}`
         })
     })
-    console.log(session)
     if(!session){
         throw new AppError(status.UNAUTHORIZED,"session token is invelide")
     }
@@ -238,6 +237,17 @@ const changePassword = async(payload:IChangePasswordPayload,sessionToken :string
             Authorization :`Bearer ${sessionToken}`
         })
     })
+
+    if(session.user.needPasswordChange){
+        await prisma.user.update({
+            where:{
+                id:session.user.id,
+            },
+            data:{
+                needPasswordChange:false
+            }
+        })
+    }
 
       const accessToken = tokenUtils.getAccesToken({
         userId: session.user.id,
@@ -341,13 +351,13 @@ const resetPassword = async (email : string, otp : string, newPassword : string)
         throw new AppError(status.NOT_FOUND, "User not found");
     }
 
-    await auth.api.resetPasswordEmailOTP({
-        body:{
-            email,
-            otp,
-            password : newPassword,
-        }
-    })
+   await auth.api.resetPasswordEmailOTP({
+    body: {
+        email,
+        otp,
+        password: newPassword,
+     }
+})
 
     if (isUserExist.needPasswordChange) {
         await prisma.user.update({
