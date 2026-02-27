@@ -23,6 +23,10 @@ SMTP_HOST:string,
 SMTP_PORT:string,
 SMTP_FROM:string
 }
+GOOGLE_CLIENT_ID:string;
+GOOGLE_CLIENT_SECRET:string;
+GOOGLE_CALLBACK_URL:string;
+FRONTEND_URL:string;
 
  }   
  
@@ -44,7 +48,11 @@ SMTP_FROM:string
         'EMAIL_SENDER_SMTP_PASS',
         'EMAIL_SENDER_SMTP_HOST',
         'EMAIL_SENDER_SMTP_PORT',
-        'EMAIL_SENDER_SMTP_FROM'
+        'EMAIL_SENDER_SMTP_FROM',
+        'GOOGLE_CLIENT_ID',
+        'GOOGLE_CLIENT_SECRET',
+        'GOOGLE_CALLBACK_URL',
+        'FRONTEND_URL'
      ];
     requiredEnvVars.forEach((variable)=>{
         if(!process.env[variable]){
@@ -65,14 +73,18 @@ SMTP_FROM:string
         REFRESH_TOKEN_EXPIRES_IN:process.env.REFRESH_TOKEN_EXPIRES_IN as string,
         BETTER_AUTH_SESSION_TOKEN_EXPIRES_IN:process.env.BETTER_AUTH_SESSION_TOKEN_EXPIRES_IN as string,
         BETTER_AUTH_SESSION_TOKEN_UPDATE_AGE:process.env.BETTER_AUTH_SESSION_TOKEN_UPDATE_AGE as string,
-       EMAIL_SENDER: {
-        SMTP_USER: process.env.EMAIL_SENDER_SMTP_USER as string,  
-        SMTP_PASS: process.env.EMAIL_SENDER_SMTP_PASS as string,
-        SMTP_HOST: process.env.EMAIL_SENDER_SMTP_HOST as string,
+        GOOGLE_CLIENT_ID:process.env.GOOGLE_CLIENT_ID as string,
+        GOOGLE_CLIENT_SECRET:process.env.GOOGLE_CLIENT_SECRET as string,
+        GOOGLE_CALLBACK_URL:process.env.GOOGLE_CALLBACK_URL as string,
+        FRONTEND_URL:process.env.FRONTEND_URL as string,
+        EMAIL_SENDER: {
+            SMTP_USER: process.env.EMAIL_SENDER_SMTP_USER as string,  
+            SMTP_PASS: process.env.EMAIL_SENDER_SMTP_PASS as string,
+            SMTP_HOST: process.env.EMAIL_SENDER_SMTP_HOST as string,
         SMTP_PORT: process.env.EMAIL_SENDER_SMTP_PORT as string,
         SMTP_FROM: process.env.EMAIL_SENDER_SMTP_FROM as string,
     }
-    }
+}
  }
 
  export const envVars = loadenvVariables();

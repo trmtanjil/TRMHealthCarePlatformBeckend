@@ -4,9 +4,12 @@ import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
 import { notFound } from "./app/middleware/notFound";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { toNodeHandler } from "better-auth/node";
+import { auth } from "./app/lib/auth";
  
    
 const app:Application = express();
+app.use("api/auth",toNodeHandler(auth))
 
 app.use(cors({
   origin : [  "http://localhost:3000", "http://localhost:5000"],

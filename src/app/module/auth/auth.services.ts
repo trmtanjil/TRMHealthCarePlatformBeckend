@@ -369,6 +369,16 @@ const resetPassword = async (email : string, otp : string, newPassword : string)
             }
         })
     }
+        if(isUserExist.needPasswordChange){
+        await prisma.user.update({
+            where:{
+                id:isUserExist.id,
+            },
+            data:{
+                needPasswordChange:false
+            }
+        })
+    }
 
     await prisma.session.deleteMany({
         where:{
@@ -376,6 +386,8 @@ const resetPassword = async (email : string, otp : string, newPassword : string)
         }
     })
 }
+
+const googleLoginSuccess = async()=>{}
 export const authServices = {
     registerPatient,
     loginUser,
@@ -385,5 +397,6 @@ export const authServices = {
     logOutUser,
     verifyEmail,
     forgetPassword,
-    resetPassword
+    resetPassword,
+    googleLoginSuccess
 }
