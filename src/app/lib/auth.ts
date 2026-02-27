@@ -19,19 +19,19 @@ import { envVars } from "../config/env";
          requireEmailVerification: true,
     },
 
-    socialProviders:{
+   socialProviders:{
         google:{
-            clientId:envVars.GOOGLE_CLIENT_ID,
-            clientSecret:envVars.GOOGLE_CLIENT_SECRET,
-
-            mapProfileToUser:()=>{
-                return{
-                    role:Role.PATIENT,
-                    status:UserStatus.ACTIVE,
-                    needPasswordChange:false,
-                    emailVerified:true,
-                    isDleted:false,
-                    deletede:null
+            clientId: envVars.GOOGLE_CLIENT_ID,
+            clientSecret: envVars.GOOGLE_CLIENT_SECRET,
+            // callbackUrl: envVars.GOOGLE_CALLBACK_URL,
+            mapProfileToUser: ()=>{
+                return {
+                    role : Role.PATIENT,
+                    status : UserStatus.ACTIVE,
+                    needPasswordChange : false,
+                    emailVerified : true,
+                    isDeleted : false,
+                    deletedAt : null,
                 }
             }
         }
@@ -139,6 +139,9 @@ import { envVars } from "../config/env";
         })
     ],
 
+
+
+
  session:{
     expiresIn:  60*60*60*24,
     updateAge: 60*60*60*24,
@@ -151,6 +154,9 @@ import { envVars } from "../config/env";
 
 //  trustedOrigins:[process.env.BETTER_AUTH_URL || "http://localhost:5000"],
 
+     redirectURLs:{
+        signIn : `${envVars.BETTER_AUTH_URL}/api/v1/auth/google/success`,
+    },
  advanced:{
     // disableCSRFCheck: true, // Disable CSRF check for development purposes. Make sure to enable it in production!
     useSecureCookies:false,

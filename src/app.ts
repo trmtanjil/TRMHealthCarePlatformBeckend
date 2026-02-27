@@ -12,9 +12,10 @@ import path from "path";
 
 const app:Application = express();
 
-app.set("view engine","ejs")
-app.set("views", path.resolve(process.cwd(), `src/app/templates `))
 
+
+app.set("view engine", "ejs");
+app.set("views", path.resolve(process.cwd(), `src/app/templates`))
 app.use("api/auth",toNodeHandler(auth))
 
 app.use(cors({
@@ -24,6 +25,7 @@ app.use(cors({
   allowedHeaders : ["Content-Type", "Authorization"]
 }))
 
+app.use("/api/auth", toNodeHandler(auth))
 // Enable URL-encoded form data parsing
 app.use(express.urlencoded({ extended: true }));
 

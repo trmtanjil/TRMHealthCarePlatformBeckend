@@ -6,8 +6,7 @@ import { doctorRoutes } from "../module/doctor/doctor.route";
 import { AdminRoutes } from "../module/admin/admin.route";
 
 const router = Router()
-
-router.use("/auth", authRoute)  
+ router.use("/auth", authRoute)  
 
 router.use("/specialties",SpecialtyRoutes)
 router.use("/users", userRoutes)
