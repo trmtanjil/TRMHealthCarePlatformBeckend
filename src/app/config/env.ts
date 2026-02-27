@@ -22,11 +22,16 @@ SMTP_PASS:string,
 SMTP_HOST:string,
 SMTP_PORT:string,
 SMTP_FROM:string
-}
+};
 GOOGLE_CLIENT_ID:string;
 GOOGLE_CLIENT_SECRET:string;
 GOOGLE_CALLBACK_URL:string;
 FRONTEND_URL:string;
+CLOUDINARY:{
+COUD_NAME:string,
+API_KEY:string,
+API_SECRET:string,
+}
 
  }   
  
@@ -52,7 +57,10 @@ FRONTEND_URL:string;
         'GOOGLE_CLIENT_ID',
         'GOOGLE_CLIENT_SECRET',
         'GOOGLE_CALLBACK_URL',
-        'FRONTEND_URL'
+        'FRONTEND_URL',
+        'CLOUDINARY_API_KEY',
+        'CLOUDINARY_API_KEY',
+        'CLOUDINARY_API_SECRET'
      ];
     requiredEnvVars.forEach((variable)=>{
         if(!process.env[variable]){
@@ -83,6 +91,11 @@ FRONTEND_URL:string;
             SMTP_HOST: process.env.EMAIL_SENDER_SMTP_HOST as string,
         SMTP_PORT: process.env.EMAIL_SENDER_SMTP_PORT as string,
         SMTP_FROM: process.env.EMAIL_SENDER_SMTP_FROM as string,
+    },
+        CLOUDINARY: {
+            COUD_NAME: process.env.CLOUDINARY_COUD_NAME as string,  
+            API_KEY: process.env.CLOUDINARY_API_KEY as string,
+            API_SECRET: process.env.CLOUDINARY_API_SECRET as string
     }
 }
  }
