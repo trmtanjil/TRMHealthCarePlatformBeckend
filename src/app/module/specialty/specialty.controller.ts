@@ -5,8 +5,15 @@ import { catchAsync } from "../../shared/catchAsync";
 import { sendResponse } from "../../shared/sendResponse";
 
 const createSpecialty = catchAsync(async (req:Request, res:Response)=>{
-    const payload = req.body
+    const payload = {
+        ...req.body,
+        icon : req.file?.path
+    }
     const result = await specialityService.createSpecialty(payload)
+
+    console.log(req.body)
+    console.log(req.file)
+
     sendResponse(res,{
         httpStatusCode:201,
         success:true,   

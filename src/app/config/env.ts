@@ -28,7 +28,7 @@ GOOGLE_CLIENT_SECRET:string;
 GOOGLE_CALLBACK_URL:string;
 FRONTEND_URL:string;
 CLOUDINARY:{
-COUD_NAME:string,
+CLOUD_NAME:string,
 API_KEY:string,
 API_SECRET:string,
 }
@@ -58,7 +58,7 @@ API_SECRET:string,
         'GOOGLE_CLIENT_SECRET',
         'GOOGLE_CALLBACK_URL',
         'FRONTEND_URL',
-        'CLOUDINARY_API_KEY',
+        'CLOUDINARY_CLOUD_NAME',
         'CLOUDINARY_API_KEY',
         'CLOUDINARY_API_SECRET'
      ];
@@ -93,7 +93,7 @@ API_SECRET:string,
         SMTP_FROM: process.env.EMAIL_SENDER_SMTP_FROM as string,
     },
         CLOUDINARY: {
-            COUD_NAME: process.env.CLOUDINARY_COUD_NAME as string,  
+            CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME as string,  
             API_KEY: process.env.CLOUDINARY_API_KEY as string,
             API_SECRET: process.env.CLOUDINARY_API_SECRET as string
     }
