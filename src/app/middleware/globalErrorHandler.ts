@@ -7,15 +7,25 @@ import { env } from "node:process";
 import { TerrorResponse, TErrorSource } from "../interfaces/error.interfaces";
 import { handleZodError } from "../errorHelpers/handleZodError";
 import AppError from "../errorHelpers/AppError";
+import { deleteFileFromCloudinary } from "../config/cloudinary.config";
  
 
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const globalErrorHandler =  (err:any, req:Request, res:Response,next:NextFunction) => {
+export const globalErrorHandler = async  (err:any, req:Request, res:Response,next:NextFunction) => {
 
     if(envVars.NODE_ENV === "development"){
         console.log("error from glovel error handler", err)
+    }
+
+    if(req.file){
+        await deleteFileFromCloudinary(req.file.path)
+    }
+
+    if(req.files && Array.isArray(req.files) && req.files.length>0){
+        const imageUrl = req.files.map((file)=>file.path)
+        await Promise.all(imageUrl.map(url=>deleteFileFromCloudinary(url)))
     }
 
     let errorSources:TErrorSource[] = []
