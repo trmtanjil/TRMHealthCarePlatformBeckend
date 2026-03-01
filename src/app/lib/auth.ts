@@ -16,7 +16,7 @@ import { envVars } from "../config/env";
     }),
     emailAndPassword: {
         enabled: true,
-         requireEmailVerification: true,
+         requireEmailVerification: envVars.NODE_ENV === "production",
     },
 
    socialProviders:{

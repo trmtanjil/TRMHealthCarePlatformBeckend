@@ -20,7 +20,7 @@ const registerPatient = catchAsync(
   const { accessToken, refreshToken, token, ...rest } = result;
 
   tokenUtils.setAccessTokenCookie(res, accessToken);
-  tokenUtils.setRefreshTokenCookie(res, refreshToken); // ⭐ THIS LINE
+  tokenUtils.setRefreshTokenCookie(res, refreshToken); // THIS LINE
   tokenUtils.setBetterAuthSessionCookie(res, token as string);
 
 
