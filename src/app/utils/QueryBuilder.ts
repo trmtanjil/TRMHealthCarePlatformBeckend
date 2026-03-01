@@ -1,4 +1,4 @@
- import { PrismmaCountManyargument, PrismmaFindManyargument } from "../interfaces/QuieryBuilder.interface"
+ import { IquearyInput, IquearyParams, PrismaModelDelegate, PrismmaCountManyargument, PrismmaFindManyargument } from "../interfaces/QuieryBuilder.interface"
 
  
 // t = model name
@@ -14,6 +14,23 @@ TInclude = Record<string,unknown>
     private skip : number=0;
     private sortby :string = "createdAt";
     private sortorder :  "asc" | "desc"="asc"; 
-    private selectFields :Record<string,undefined>;
+    private selectFields :Record<string,undefined |boolean>;
+
+    constructor(
+        private model:PrismaModelDelegate,
+        private queryParams :IquearyParams,
+        private config : IquearyInput, 
+    ){
+        this.query={
+            where:{},
+            inlcude:{},
+            orderBy:{},
+            skip:0,
+            take:10,
+        };
+        this.countquery={
+            where:{},
+        }
+    }
     
 }
