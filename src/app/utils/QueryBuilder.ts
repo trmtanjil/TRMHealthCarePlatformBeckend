@@ -1,4 +1,4 @@
- import { IquearyInput, IquearyParams, PrismaModelDelegate, PrismaNumberFilter, PrismaStringFilter, PrismaWhereConditions, PrismmaCountManyargument, PrismmaFindManyargument, PrsmaStringFilter } from "../interfaces/QuieryBuilder.interface"
+ import { IquearyInput, IquearyParams, IQueryResult, PrismaModelDelegate, PrismaNumberFilter, PrismaStringFilter, PrismaWhereConditions, PrismmaCountManyargument, PrismmaFindManyargument, PrsmaStringFilter } from "../interfaces/QuieryBuilder.interface"
 
  
 // t = model name
@@ -14,7 +14,7 @@ TInclude = Record<string,unknown>
     private skip : number=0;
     private sortby :string = "createdAt";
     private sortorder :  "asc" | "desc"="asc"; 
-    private selectFields :Record<string,undefined |boolean>;
+    private selectFields: Record<string, boolean> | undefined;
 
     constructor(
         private model:PrismaModelDelegate,
@@ -288,6 +288,107 @@ TInclude = Record<string,unknown>
         return this;
     }
 
+    
+    include(relation : TInclude) : this{
+        if(this.selectFields){
+            return this
+        }
+
+        //if fields method is, include method will be ignored to prevent conflict between select and include
+        this.query.include = { ...(this.query.include as Record<string, unknown>), ...(relation as Record<string, unknown>) };
+
+        return this;
+    }
+
+    dynamicInclude(
+        includeConfig : Record<string, unknown>,
+        defaultInclude ?: string[]
+    ) : this{
+
+        if(this.selectFields){
+            return this;
+        }
+
+        const result : Record<string, unknown> = {};
+
+        defaultInclude?.forEach((field) => {
+            if(includeConfig[field]){
+                result[field] = includeConfig[field];
+            }
+        })
+
+        const includeParam = this.queryParams.include as string | undefined;
+
+        if(includeParam && typeof includeParam === 'string'){
+            const requestedRelations = includeParam.split(",").map(relation => relation.trim());
+
+            requestedRelations.forEach((relation) => {
+                if(includeConfig[relation]){
+                    result[relation] = includeConfig[relation];
+                }
+            })
+        }
+
+        this.query.include = {...(this.query.include as Record<string, unknown>), ...result };
+
+        return this;
+    }
+
+    where(condition : TWhereInput) : this {
+
+        this.query.where =  this.deepMerge(this.query.where as Record<string, unknown>, condition as Record<string, unknown>);
+
+        this.countquery.where = this.deepMerge(this.countquery.where as Record<string, unknown>, condition as Record<string, unknown>);
+
+        return this;
+    }
+
+    async execute() : Promise<IQueryResult<T>> {
+        const [total, data] = await Promise.all([
+            this.model.count(this.countquery as Parameters<typeof this.model.count>[0]),
+            this.model.findMany(this.query as Parameters<typeof this.model.findMany>[0])
+        ])
+
+        const totalPages = Math.ceil(total / this.limit);
+
+        return {
+            data : data as T[],
+            meta : {
+                page : this.page,
+                limit : this.limit,
+                total,
+                totalPages,
+            }
+        }
+
+    }
+
+    async count() : Promise<number> {
+        return await this.model.count(this.countquery as Parameters<typeof this.model.count>[0]);
+    }
+
+ 
+    getQuery() : PrismmaFindManyargument {
+        return this.query;
+    }
+
+private deepMerge(target : Record<string, unknown>, source : Record<string, unknown>) : Record<string, unknown> {
+
+        const result = {...target};
+
+        for(const key in source){
+            if(source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])){
+                if(result[key] && typeof result[key] === 'object' && !Array.isArray(result[key])){
+                    result[key] = this.deepMerge(result[key] as Record<string, unknown>, source[key] as Record<string, unknown>);
+                }else{
+                    result[key] = source[key];
+                }
+            }else{
+                result[key] = source[key];
+            }
+        }
+        return result;
+    }
 
      private parseFilterValue(value : unknown) : unknown {
 
@@ -308,6 +409,8 @@ TInclude = Record<string,unknown>
 
         return value;
     }
+
+
 
      private parseRangeFilter(value : Record<string, string | number>) : PrismaNumberFilter | PrismaStringFilter | Record<string, unknown> {
 

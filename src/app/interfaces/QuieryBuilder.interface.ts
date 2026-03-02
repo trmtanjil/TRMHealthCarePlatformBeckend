@@ -25,7 +25,7 @@ export interface PrismmaCountManyargument{
 }
 
 export interface PrismaModelDelegate {
-    findmany(arg ?:any):Promise<unknown[]>;
+    findMany(arg ?:any):Promise<unknown[]>;
     count(arg ?:any):Promise<number>;
 }
 
@@ -43,7 +43,7 @@ export interface IquearyParams {
 }
 export interface IquearyInput {
     searchebleFeilds ?:string[];
-    feilterableFeilds ?:string[];
+    filterableFields ?:string[];
 }
 
 export interface PrsmaStringFilter {
@@ -92,4 +92,14 @@ export interface PrismaStringFilter{
     lte     ?:string;
     gt      ?:string;
     gte     ?:string;
+}
+
+export interface IQueryResult<T> {
+    data : T[];
+    meta : {
+        page : number;
+        limit : number;
+        total : number;
+        totalPages : number;
+    }
 }

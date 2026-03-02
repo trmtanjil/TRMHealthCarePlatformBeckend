@@ -3,18 +3,30 @@
  import status from "http-status"
 import AppError from "../../errorHelpers/AppError"
 import { prisma } from "../../lib/prisma"
+import { QueryBuilder } from "../../utils/QueryBuilder"
+import { IquearyParams } from "../../interfaces/QuieryBuilder.interface"
+import { doctorFilterableFields, doctorSearchableFields } from "./doctor.constand"
 
-const getAllDoctors = async ()=>{
-    const doctors = await prisma.doctor.findMany({
-        include:{
-            specialties:{
-                include:{
-                    specialty:true
-                }
-            }
+const getAllDoctors = async (query:IquearyParams)=>{
+    // const doctors = await prisma.doctor.findMany({
+    //     include:{
+    //         specialties:{
+    //             include:{
+    //                 specialty:true
+    //             }
+    //         }
+    //     }
+    // })
+    // return doctors
+
+    const querybuilder = new QueryBuilder(
+        prisma.doctor,
+        query,
+        {
+            searchebleFeilds:doctorSearchableFields,
+            filterableFields:doctorFilterableFields
         }
-    })
-    return doctors
+    )
 
 }
 
