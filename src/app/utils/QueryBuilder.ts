@@ -1,4 +1,4 @@
- import { IquearyInput, IquearyParams, PrismaModelDelegate, PrismmaCountManyargument, PrismmaFindManyargument } from "../interfaces/QuieryBuilder.interface"
+ import { IquearyInput, IquearyParams, PrismaModelDelegate, PrismaWhereConditions, PrismmaCountManyargument, PrismmaFindManyargument, PrsmaStringFilter } from "../interfaces/QuieryBuilder.interface"
 
  
 // t = model name
@@ -31,6 +31,66 @@ TInclude = Record<string,unknown>
         this.countquery={
             where:{},
         }
+    }
+    search():this{
+        const {searchTerm} = this.queryParams;
+        const {searchebleFeilds}=this.config;
+
+        if(searchTerm && searchebleFeilds && searchebleFeilds.length>0){
+            const searchCondition :Record<string,unknown> []=
+            searchebleFeilds.map((field)=>{
+                if(field.includes("." )){
+                    const parts = field.split(".");
+
+                    if(parts.length ===2){
+                        const [relation, nestedField] = parts;
+
+                        const stringFilter :PrsmaStringFilter={
+                            contains:searchTerm,
+                            mode:"insensitive" as const,
+                        }
+
+                        return {
+                            [relation]:{
+                                [nestedField]:stringFilter,
+                            }
+                        }
+                    }else if(parts.length ===3){
+                          const [relation, nestedRelation, nestedField] = parts;
+
+                          const stringFilter :PrsmaStringFilter={
+                            contains:searchTerm,
+                            mode:"insensitive" as const,
+                          }
+
+                          return {
+                            [relation]:{
+                                [nestedRelation]:{
+                                    [nestedField]:stringFilter,
+                                }
+                            }
+                          }
+                    }
+
+            } 
+            const stringFilter :PrsmaStringFilter={
+                contains:searchTerm,
+                mode:"insensitive" as const,
+            }
+            return {
+                [field]:stringFilter,
+            }
+
+            }
+     );
+            const whereCondition =this.query.where as PrismaWhereConditions
+            whereCondition.OR = searchCondition;
+
+            const coundWhereCondition =this.countquery.where as PrismaWhereConditions
+            coundWhereCondition.OR = searchCondition;
+        }
+        return this;
+
     }
     
 }
