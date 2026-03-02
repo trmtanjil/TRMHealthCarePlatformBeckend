@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+ 
 export interface PrismmaFindManyargument{
     where?:Record<string,unknown>;
     orderBy?:Record<string,unknown>;
@@ -66,4 +67,29 @@ export interface PrismaWhereConditions{
     OR?:Record<string,unknown>[];
     NOT?:Record<string,unknown>[];
     [key:string]:unknown
+}
+
+export interface PrismaNumberFilter{
+equal ?:number;
+in ?:number[];
+notIn ?:number[];
+lt ?:number;
+lte ?:number;
+gt ?:number;
+gte ?:number;   
+}
+
+export interface PrismaStringFilter{
+    contains ?:string;
+    startsWith ?:string;
+    endsWith ?:string;
+    mode    ?:string;
+    equal   ?:string;
+    in      ?:string[];
+    notIn   ?:string[];
+    not     ?:string;
+    lt      ?:string;
+    lte     ?:string;
+    gt      ?:string;
+    gte     ?:string;
 }
