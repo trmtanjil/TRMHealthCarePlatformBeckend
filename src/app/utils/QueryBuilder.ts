@@ -209,7 +209,20 @@ TInclude = Record<string,unknown>
         return this;
     }
 
+        paginate() : this {
+        const page = Number(this.queryParams.page) || 1;
+        const limit = Number(this.queryParams.limit) || 10;
 
+        this.page = page;
+        this.limit = limit;
+        this.skip = (page - 1) * limit;
+
+        this.query.skip = this.skip;
+        this.query.take = this.limit;
+
+        return this;
+    }
+    
      private parseFilterValue(value : unknown) : unknown {
 
         if(value === 'true'){
