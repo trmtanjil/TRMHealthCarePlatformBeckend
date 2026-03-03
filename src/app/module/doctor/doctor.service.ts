@@ -5,7 +5,9 @@ import AppError from "../../errorHelpers/AppError"
 import { prisma } from "../../lib/prisma"
 import { QueryBuilder } from "../../utils/QueryBuilder"
 import { IquearyParams } from "../../interfaces/QuieryBuilder.interface"
-import { doctorFilterableFields, doctorSearchableFields } from "./doctor.constand"
+import { doctorFilterableFields, doctorIncludeConfig, doctorSearchableFields } from "./doctor.constand"
+import { Doctor, Prisma } from "../../../generated/prisma/client"
+import { includes } from "zod"
 
 const getAllDoctors = async (query:IquearyParams)=>{
     // const doctors = await prisma.doctor.findMany({
@@ -19,7 +21,8 @@ const getAllDoctors = async (query:IquearyParams)=>{
     // })
     // return doctors
 
-    const querybuilder = new QueryBuilder(
+
+    const querybuilder = new QueryBuilder<Doctor,Prisma.DoctorWhereInput,Prisma.DoctorInclude>(
         prisma.doctor,
         query,
         {
@@ -27,6 +30,24 @@ const getAllDoctors = async (query:IquearyParams)=>{
             filterableFields:doctorFilterableFields
         }
     )
+    const result = await querybuilder
+                 .search()
+                 .filter()
+                  .where({
+                    isDeleted:false
+                  })
+                  .include({
+                      user:true,
+                      specialties:true,
+                      
+                  })
+                  .dynamicInclude(doctorIncludeConfig)
+                  .paginate()
+                  .sort()
+                  .fields()
+                  .execute()
+
+    return result
 
 }
 

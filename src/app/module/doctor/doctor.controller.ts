@@ -3,11 +3,13 @@ import { catchAsync } from "../../shared/catchAsync";
 import { doctorService } from "./doctor.service";
 import status from "http-status";
 import { sendResponse } from "../../shared/sendResponse";
+import { IquearyParams } from "../../interfaces/QuieryBuilder.interface";
  
 const getAllDoctors = catchAsync(
     async (req:Request, res:Response) => {
+        const query = req.query
 
-        const result = await doctorService.getAllDoctors();
+        const result = await doctorService.getAllDoctors(query as IquearyParams);
 
             sendResponse(res,{
                 httpStatusCode: status.OK,
