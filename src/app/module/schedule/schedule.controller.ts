@@ -60,7 +60,8 @@ const updateSchedule = catchAsync( async (req : Request, res : Response) => {
 });
 
 const deleteSchedule = catchAsync( async (req : Request, res : Response) => {
-     await ScheduleService.deleteSchedule( );
+    const { id } = req.params
+     await ScheduleService.deleteSchedule( id as string);
     sendResponse(res, {
         success: true,
         httpStatusCode: status.OK,
