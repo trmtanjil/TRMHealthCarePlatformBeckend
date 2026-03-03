@@ -3,11 +3,12 @@ import status from "http-status";
  import { catchAsync } from "../../shared/catchAsync";
 import { sendResponse } from "../../shared/sendResponse";
 import { ScheduleService } from "./schedule.service";
+import { IquearyParams } from "../../interfaces/QuieryBuilder.interface";
  
 const createSchedule = catchAsync( async (req : Request, res : Response) => {
-    
+    const payload = req.body
 
-     const schedule = await ScheduleService.createSchedule( );
+     const schedule = await ScheduleService.createSchedule(payload );
 
 
 
@@ -20,13 +21,15 @@ const createSchedule = catchAsync( async (req : Request, res : Response) => {
 });
 
 const getAllSchedules = catchAsync( async (req : Request, res : Response) => {
-
+    const query = req.query
+    const result = await ScheduleService.getAllSchedules(query as IquearyParams);
 
      sendResponse(res, {
         success: true,
         httpStatusCode: status.OK,
         message: 'Schedules retrieved successfully',
-    
+          data: result.data,
+        meta: result.meta
     });
 });
 

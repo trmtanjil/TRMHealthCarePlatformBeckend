@@ -2,6 +2,10 @@ import { addHours, addMinutes , format} from "date-fns";
 import { ICreateSchedulePayload } from "./schedule.interface"
 import { convertDateTime } from "./schedule.utils";
 import { prisma } from "../../lib/prisma";
+import { IquearyParams } from "../../interfaces/QuieryBuilder.interface";
+import { Prisma, Schedule } from "../../../generated/prisma/client";
+import { QueryBuilder } from "../../utils/QueryBuilder";
+import { scheduleFilterableFields, scheduleIncludeConfig, scheduleSearchableFields } from "./schedule.constant";
  
  
 const createSchedule = async (payload:ICreateSchedulePayload) =>{
@@ -70,7 +74,26 @@ const createSchedule = async (payload:ICreateSchedulePayload) =>{
 
 
 
-const getAllSchedules = async ( ) => {}
+const getAllSchedules = async (query:IquearyParams ) => {
+const  queryBuilder = new QueryBuilder<Schedule, Prisma.ScheduleWhereInput, Prisma.ScheduleInclude>(
+    prisma.schedule,
+      query,
+        {
+            searchebleFeilds: scheduleSearchableFields,
+            filterableFields:scheduleFilterableFields
+        }
+)
+ const result = await queryBuilder
+    .search()
+    .filter()
+    .paginate()
+    .dynamicInclude(scheduleIncludeConfig)
+    .sort()
+    .fields()
+    .execute();
+
+    return result;
+}
 
 const getScheduleById = async ( ) => {}
 
