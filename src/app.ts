@@ -8,10 +8,11 @@ import { toNodeHandler } from "better-auth/node";
 import { auth } from "./app/lib/auth";
 import path from "path";
 import { envVars } from "./app/config/env";
- 
+ import qs from "qs"
    
 
 const app:Application = express();
+  app.set("query parser",(str:string) =>qs.parse(str))
 
 app.use(cors({
   origin : [ envVars.FRONTEND_URL,envVars.BETTER_AUTH_URL, "http://localhost:3000", "http://localhost:5000"],
