@@ -1,4 +1,4 @@
- import { IquearyInput, IquearyParams, IQueryResult, PrismaModelDelegate, PrismaNumberFilter, PrismaStringFilter, PrismaWhereConditions, PrismmaCountManyargument, PrismmaFindManyargument, PrsmaStringFilter } from "../interfaces/QuieryBuilder.interface"
+ import { IquearyInput, IquearyParams, IQueryResult, PrismaModelDelegate, PrismaNumberFilter, PrismaStringFilter, PrismaWhereConditions, PrismmaCountManyargument, PrismmaFindManyargument } from "../interfaces/QuieryBuilder.interface"
 
  
 // t = model name
@@ -19,7 +19,7 @@ TInclude = Record<string,unknown>
     constructor(
         private model:PrismaModelDelegate,
         private queryParams :IquearyParams,
-        private config : IquearyInput, 
+        private config : IquearyInput ={}, 
     ){
         this.query={
             where:{},
@@ -31,68 +31,72 @@ TInclude = Record<string,unknown>
         this.countquery={
             where:{},
         }
-    }
-    search():this{
+    }  
+    
+    search() : this {
         const {searchTerm} = this.queryParams;
-        const {searchebleFeilds}=this.config;
-
-        if(searchTerm && searchebleFeilds && searchebleFeilds.length>0){
-            const searchCondition :Record<string,unknown> []=
-            searchebleFeilds.map((field)=>{
-                if(field.includes("." )){
+        const { searchebleFeilds} = this.config;
+        // doctorSearchableFields = ['user.name', 'user.email', 'specialties.specialty.title' , 'specialties.specialty.description']
+        if(searchTerm && searchebleFeilds && searchebleFeilds.length > 0){
+            const searchConditions : Record<string, unknown>[] = searchebleFeilds.map((field) => {
+                if(field.includes(".")){
                     const parts = field.split(".");
 
-                    if(parts.length ===2){
+                    if(parts.length === 2){
                         const [relation, nestedField] = parts;
 
-                        const stringFilter :PrsmaStringFilter={
-                            contains:searchTerm,
-                            mode:"insensitive" as const,
+                        const stringFilter : PrismaStringFilter = {
+                            contains : searchTerm,
+                            mode : 'insensitive' as const,
                         }
 
                         return {
-                            [relation]:{
-                                [nestedField]:stringFilter,
+                            [relation] : {
+                                [nestedField] : stringFilter
                             }
                         }
-                    }else if(parts.length ===3){
-                          const [relation, nestedRelation, nestedField] = parts;
+                    }else if(parts.length === 3){
+                        const [relation, nestedRelation, nestedField] = parts;
 
-                          const stringFilter :PrsmaStringFilter={
-                            contains:searchTerm,
-                            mode:"insensitive" as const,
-                          }
+                        const stringFilter : PrismaStringFilter = {
+                            contains : searchTerm,
+                            mode : 'insensitive' as const,
+                        }
 
-                          return {
-                            [relation]:{
-                                [nestedRelation]:{
-                                    [nestedField]:stringFilter,
+                        return {
+                            [relation] : {
+                                some :{
+                                    [nestedRelation]: {
+                                        [nestedField]: stringFilter
+                                    }
                                 }
                             }
-                          }
+                        }
                     }
+                    
+                }
+                // direct field
+                const stringFilter: PrismaStringFilter = {
+                    contains: searchTerm,
+                    mode: 'insensitive' as const,
+                }
 
-            } 
-            const stringFilter :PrsmaStringFilter={
-                contains:searchTerm,
-                mode:"insensitive" as const,
+                return {
+                    [field]: stringFilter
+                }
             }
-            return {
-                [field]:stringFilter,
-            }
+        )
 
-            }
-     );
-            const whereCondition =this.query.where as PrismaWhereConditions
-            whereCondition.OR = searchCondition;
+        const whereConditions = this.query.where as PrismaWhereConditions
 
-            const coundWhereCondition =this.countquery.where as PrismaWhereConditions
-            coundWhereCondition.OR = searchCondition;
+        whereConditions.OR = searchConditions;
+
+        const countWhereConditions = this.countquery.where as PrismaWhereConditions;
+        countWhereConditions.OR = searchConditions;
         }
+
         return this;
-
     }
-
     filter():this{
         
         const { filterableFields } = this.config;

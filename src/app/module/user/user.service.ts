@@ -23,18 +23,18 @@ specialties.push(speciality)
 
 const userExists = await prisma.user.findUnique({
     where:{
-        email: payload.docotor.email
+        email: payload.doctor.email
     }
 })
 if(userExists){
-    throw new AppError(status.CONFLICT,`User with email ${payload.docotor.email} already exists`);
+    throw new AppError(status.CONFLICT,`User with email ${payload.doctor.email} already exists`);
 }
 
 const userData = await auth.api.signUpEmail({
     body:{
-        email: payload.docotor.email,
+        email: payload.doctor.email,
         password: payload.password,
-        name: payload.docotor.name,
+        name: payload.doctor.name,
         role:Role.DOCTOR,
         needPasswordChange: true
     }
@@ -47,7 +47,7 @@ const result = await prisma.$transaction(async(tx)=>{
     const doctorData = await tx.doctor.create({
         data:{
             userId: userData.user.id,
-            ...payload.docotor,
+            ...payload.doctor,
         }
     })
     const doctorSpecialtiesData = specialties.map((specialty)=>{

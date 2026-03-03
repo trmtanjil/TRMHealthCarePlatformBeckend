@@ -38,7 +38,11 @@ const getAllDoctors = async (query:IquearyParams)=>{
                   })
                   .include({
                       user:true,
-                      specialties:true,
+                      specialties:{
+                        include:{
+                            specialty:true
+                        }
+                      },
                       
                   })
                   .dynamicInclude(doctorIncludeConfig)

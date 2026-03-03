@@ -12,7 +12,7 @@ const router = Router()
 
  
 router.post("/create-doctor",
-validateRequst(createDoctorZodSchema)
+validateRequst(createDoctorZodSchema),
 
 
 //     (req:Request,res:Response,next:NextFunction)=>{
@@ -26,8 +26,7 @@ validateRequst(createDoctorZodSchema)
 //     next()
  
 // }
-
-, userController.createDoctor)
+ userController.createDoctor)
 
 router.post("/create-admin",
     checkAuth(Role.SUPER_ADMIN,Role.ADMIN),

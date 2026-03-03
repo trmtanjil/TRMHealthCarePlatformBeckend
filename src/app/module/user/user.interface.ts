@@ -2,7 +2,7 @@ import { Gender } from "../../../generated/prisma/enums";
 
 export interface ICreateDoctorPayload{
  password: string;
- docotor: {
+ doctor: {
     name: string;
     email: string;
     profilePhoto?: string;
