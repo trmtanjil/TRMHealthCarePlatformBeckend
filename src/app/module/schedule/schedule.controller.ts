@@ -47,8 +47,10 @@ const {id}=req.params;
 });
 
 const updateSchedule = catchAsync( async (req : Request, res : Response) => {
- 
-    const updatedSchedule = await ScheduleService.updateSchedule( );
+ const { id } = req.params
+    const payload = req.body
+
+    const updatedSchedule = await ScheduleService.updateSchedule(id as string,payload);
     sendResponse(res, {
         success: true,
         httpStatusCode: status.OK,

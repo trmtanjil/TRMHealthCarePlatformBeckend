@@ -1,12 +1,12 @@
-import { addHours, addMinutes , format} from "date-fns";
-import { ICreateSchedulePayload } from "./schedule.interface"
+import {    addHours, addMinutes , format} from "date-fns";
+import { ICreateSchedulePayload, IUpdateSchedulePayload } from "./schedule.interface"
 import { convertDateTime } from "./schedule.utils";
 import { prisma } from "../../lib/prisma";
 import { IquearyParams } from "../../interfaces/QuieryBuilder.interface";
 import { Prisma, Schedule } from "../../../generated/prisma/client";
 import { QueryBuilder } from "../../utils/QueryBuilder";
 import { scheduleFilterableFields, scheduleIncludeConfig, scheduleSearchableFields } from "./schedule.constant";
- 
+  
  
 const createSchedule = async (payload:ICreateSchedulePayload) =>{
     const {startDate,endDate,startTime,endTime}= payload;
@@ -105,7 +105,42 @@ return schedule
 }
 
 // refactoring - doctor's appointment or booked slot conflict check
-const updateSchedule = async ( ) => {
+const updateSchedule = async (id :string,payload:IUpdateSchedulePayload ) => {
+    const {startDate,endDate,startTime,endTime}= payload;
+
+    const startDateTime = new Date(
+        addMinutes(
+            addHours(
+                `${format(startDate,'yyyy-MM-dd')}`,
+                Number(startTime.split(':')[0]),
+
+            ),
+            Number(startTime.split(':')[1])
+        
+        )
+    )
+    const endDateTime = new Date(
+        addMinutes(
+            addHours(
+                `${format(endDate,'yyyy-MM-dd')}`,
+                Number(endTime.split(":")[0]),
+            ),
+            Number(endTime.split(":")[1])
+        )
+    )
+    const updatedSchedule = await prisma.schedule.update({
+        where : {
+            id :id
+        },
+        data : {
+            startDateTime : startDateTime,
+            endDateTime : endDateTime
+        }
+    })
+    return updatedSchedule
+
+     
+
 }
 
 const deleteSchedule = async ( ) => {}
