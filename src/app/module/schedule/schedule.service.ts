@@ -95,7 +95,14 @@ const  queryBuilder = new QueryBuilder<Schedule, Prisma.ScheduleWhereInput, Pris
     return result;
 }
 
-const getScheduleById = async ( ) => {}
+const getScheduleById = async (id :string ) => {
+const schedule = await prisma.schedule.findUnique({
+    where : {
+        id :id
+    }
+})
+return schedule
+}
 
 // refactoring - doctor's appointment or booked slot conflict check
 const updateSchedule = async ( ) => {
