@@ -3,13 +3,12 @@ import status from "http-status";
  import { catchAsync } from "../../shared/catchAsync";
 import { sendResponse } from "../../shared/sendResponse";
 import { DoctorScheduleService } from "./doctorSchedule.service";
-import { ICreateDoctorSchedulePayload } from "./doctorSchedule.interface";
  
 const createMyDoctorSchedule = catchAsync( async (req : Request, res : Response) => {
     const payload = req.body;
     const user = req.user;
  
-    const doctorSchedule = await DoctorScheduleService.createMyDoctorSchedule(user as IRequestUser, payload as ICreateDoctorSchedulePayload);
+    const doctorSchedule = await DoctorScheduleService.createMyDoctorSchedule(user!  , payload  );
     sendResponse(res, {
         success: true,
         httpStatusCode: status.CREATED,
@@ -53,8 +52,10 @@ const getDoctorScheduleById = catchAsync(async (req: Request, res: Response) => 
 });
 
 const updateMyDoctorSchedule = catchAsync( async (req : Request, res : Response) => {
+    const payload = req.body;
+    const user = req.user;
      
-    const updatedDoctorSchedule = await DoctorScheduleService.updateMyDoctorSchedule( );
+    const updatedDoctorSchedule = await DoctorScheduleService.updateMyDoctorSchedule( user!, payload );
     sendResponse(res, {
         success: true,
         httpStatusCode: status.OK,  
