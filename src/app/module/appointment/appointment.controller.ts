@@ -3,10 +3,13 @@ import status from "http-status";
 import { catchAsync } from "../../shared/catchAsync";
 import { sendResponse } from "../../shared/sendResponse";
 import { AppointmentService } from "./appointment.service";
+import { IRequestUser } from "../../interfaces/requestUser.interface";
 
 const bookAppointment = catchAsync( async (req : Request, res : Response) => {
+    const payload = req.body;
+    const user = req.user;
  
-    const appointment = await AppointmentService.bookAppointment();
+    const appointment = await AppointmentService.bookAppointment(payload,user as IRequestUser);
     sendResponse(res, {
         success: true,
         httpStatusCode: status.CREATED, 

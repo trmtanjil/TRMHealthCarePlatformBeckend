@@ -1,8 +1,67 @@
+import { IRequestUser } from "../../interfaces/requestUser.interface"
+import { prisma } from "../../lib/prisma"
+import { IBookAppointmentPayload } from "./appointment.interface"
+import { v7 as uuidv7 } from "uuid";
  
 
 // Pay Now Book Appointment
-const bookAppointment = async ( ) => {
-   
+const bookAppointment = async (payload:IBookAppointmentPayload,user:IRequestUser) => {
+   const patientData = await prisma.patient.findFirstOrThrow({
+    where:{
+        email:user.email
+    }
+   });
+   const doctorData = await prisma.doctor.findFirstOrThrow({
+    where:{
+        id:payload.doctorId,
+        isDeleted:false
+    }
+   })
+   const scheduleData = await prisma.schedule.findFirstOrThrow({
+    where:{
+        id:payload.scheduleId,
+    }
+   })
+
+    
+      const doctorSchedule = await prisma.doctorSchedules.findUniqueOrThrow({
+    where : {
+        doctorId_scheduleId:{
+            doctorId : doctorData.id,
+            scheduleId : scheduleData.id,   
+        }
+    }
+   });
+       const videoCallingId = String(uuidv7());
+  
+       const result = await prisma.$transaction(async (tx) => {
+           const appointmentData = await tx.appointment.create({
+               data:{
+                doctorId:doctorData.id,
+                patientId:patientData.id,
+                scheduleId:doctorSchedule.scheduleId,
+                videoCallingId,
+        
+               }
+           });
+           await tx.doctorSchedules.update({
+               where : {
+                  doctorId_scheduleId : {
+                      doctorId :payload.scheduleId,
+                      scheduleId : payload.scheduleId
+
+                  }
+               },
+               data : {
+                   isBooked : true
+               }
+               
+           })
+           // payment interegration will be heare
+           return appointmentData
+       })
+
+       return result
  
 }
 
