@@ -136,7 +136,19 @@ const updateMyDoctorSchedule = async ( user:IRequestUser,payload:IUpdateDoctorSc
     return result
 }
 
-const deleteMyDoctorSchedule = async ( ) => {
+const deleteMyDoctorSchedule = async (id:string, user :IRequestUser ) => {
+    const doctorData = await prisma.doctor.findUniqueOrThrow({
+        where:{
+            email:user.email
+        }
+    });
+    const result = await prisma.doctorSchedules.deleteMany({
+        where: {
+            doctorId: doctorData.id,
+            scheduleId: id
+        }
+    })
+    return result
 }
 
 
