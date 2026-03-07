@@ -80,7 +80,7 @@ const getMyAppointments = async (user: IRequestUser) => {
         }
     });
 
-    let appointments = [],any;
+    let appointments = [];
 
     if (patientData) {
         appointments = await prisma.appointment.findMany({
