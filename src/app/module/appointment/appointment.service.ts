@@ -1,3 +1,4 @@
+import { any } from "zod";
 import { IRequestUser } from "../../interfaces/requestUser.interface"
 import { prisma } from "../../lib/prisma"
 import { IBookAppointmentPayload } from "./appointment.interface"
@@ -79,7 +80,7 @@ const getMyAppointments = async (user: IRequestUser) => {
         }
     });
 
-    let appointments = [];
+    let appointments = [],any;
 
     if (patientData) {
         appointments = await prisma.appointment.findMany({
