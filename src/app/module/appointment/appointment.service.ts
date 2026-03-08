@@ -1,4 +1,6 @@
-import { any } from "zod";
+ import status from "http-status";
+import { AppointmentStatus, Role } from "../../../generated/prisma/enums";
+import AppError from "../../errorHelpers/AppError";
 import { IRequestUser } from "../../interfaces/requestUser.interface"
 import { prisma } from "../../lib/prisma"
 import { IBookAppointmentPayload } from "./appointment.interface"
@@ -80,7 +82,8 @@ const getMyAppointments = async (user: IRequestUser) => {
         }
     });
 
-    let appointments = [];
+    let appointments ;
+    // let appointments = [];
 
     if (patientData) {
         appointments = await prisma.appointment.findMany({
@@ -116,8 +119,28 @@ const getMyAppointments = async (user: IRequestUser) => {
 // 3. Patients can only cancel the scheduled appointment if it scheduled not completed or cancelled or inprogress. 
 // 4. Admin and Super admin can update to any status.
 
-const changeAppointmentStatus = async () => {
-    
+const changeAppointmentStatus = async (appointmentId: string, appointmentStatus: AppointmentStatus, user: IRequestUser) => {
+    const appointmetData = await prisma.appointment.findUniqueOrThrow({
+        where:{
+            id:appointmentId
+        },
+        include:{
+            doctor:true
+        }
+    });
+    if(user.role === Role.DOCTOR){
+        if(!(user?.email === appointmetData?.doctor.email)){
+              throw new AppError(status.BAD_REQUEST, "This is not your appointment")
+        }
+        return await prisma.appointment.update({
+            where:{
+                id:appointmentId
+            },
+            data:{
+                status:appointmentStatus
+            }
+        })
+    }
 }
 
 // refactoring on include of doctor and patient data in appointment details, we can use query builder to get the data in single query instead of multiple queries in case of doctor and patient both
