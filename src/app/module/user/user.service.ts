@@ -80,6 +80,7 @@ const result = await prisma.$transaction(async(tx)=>{
             designation: true,
             createdAt: true,
             updatedAt: true,
+            
             user:{
                 select:{
                     id: true,

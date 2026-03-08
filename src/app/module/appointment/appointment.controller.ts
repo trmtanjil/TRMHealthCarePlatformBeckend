@@ -44,9 +44,10 @@ const changeAppointmentStatus = catchAsync(async (req: Request, res: Response) =
 });
 
 const getMySingleAppointment = catchAsync(async (req: Request, res: Response) => {
- 
+ const appointmentId = req.params.id;
+ const user = req.user
 
-    const appointment = await AppointmentService.getMySingleAppointment( );
+    const appointment = await AppointmentService.getMySingleAppointment(appointmentId as string, user as IRequestUser );
     sendResponse(res, {
         success: true,
         httpStatusCode: status.OK,
