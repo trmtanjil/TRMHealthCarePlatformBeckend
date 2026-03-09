@@ -31,7 +31,12 @@ CLOUDINARY:{
 CLOUD_NAME:string,
 API_KEY:string,
 API_SECRET:string,
-}
+},
+    STRIPE:{
+        STRIPE_SECRET_KEY: string,
+        STRIPE_WEBHOKE_SECRET:string
+        
+    }
 
  }   
  
@@ -60,7 +65,9 @@ API_SECRET:string,
         'FRONTEND_URL',
         'CLOUDINARY_CLOUD_NAME',
         'CLOUDINARY_API_KEY',
-        'CLOUDINARY_API_SECRET'
+        'CLOUDINARY_API_SECRET',
+        'STRIPE_SECRET_KEY',
+        'STRIPE_WEBHOKE_SECRET'
      ];
     requiredEnvVars.forEach((variable)=>{
         if(!process.env[variable]){
@@ -96,6 +103,10 @@ API_SECRET:string,
             CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME as string,  
             API_KEY: process.env.CLOUDINARY_API_KEY as string,
             API_SECRET: process.env.CLOUDINARY_API_SECRET as string
+    },
+    STRIPE:{
+        STRIPE_SECRET_KEY:process.env.STRIPE_SECRET_KEY as string,
+        STRIPE_WEBHOKE_SECRET:process.env.STRIPE_WEBHOKE_SECRET as string
     }
 }
  }

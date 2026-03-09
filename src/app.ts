@@ -14,6 +14,15 @@ import { envVars } from "./app/config/env";
 const app:Application = express();
   app.set("query parser",(str:string) =>qs.parse(str))
 
+  app.use("/webhook", express.raw({type:"application/json"}),async (req: Request, res: Response) => {
+console.log("webhook recived", req.body)
+    res.status(201).json({
+      success:true,
+      message:"webhook is working",
+      
+    });
+  })
+
 app.use(cors({
   origin : [ envVars.FRONTEND_URL,envVars.BETTER_AUTH_URL, "http://localhost:3000", "http://localhost:5000"],
   credentials : true,
