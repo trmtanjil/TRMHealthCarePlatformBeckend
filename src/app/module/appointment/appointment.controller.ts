@@ -79,8 +79,10 @@ const bookAppointmentWithPayLater = catchAsync(async (req: Request, res: Respons
 });
 
 const initiatePayment = catchAsync(async (req: Request, res: Response) => {
+    const appointmentId = req.params.id
+    const user = req.user;
    
-    const paymentInfo = await AppointmentService.initiatePayment( );
+    const paymentInfo = await AppointmentService.initiatePayment( appointmentId as string,user as IRequestUser);
 
     sendResponse(res, {
         success: true,
