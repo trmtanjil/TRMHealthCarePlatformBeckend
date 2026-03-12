@@ -323,7 +323,71 @@ const bookAppointmentWithPayLater = async (payload : IBookAppointmentPayload, us
     return result;
 }  
 
- 
+const initiatePayment = async (appointmentId: string, user : IRequestUser) => {
+    const patientData = await prisma.patient.findUniqueOrThrow({
+        where: {
+            email: user.email,
+        }
+    });
+
+    const appointmentData = await prisma.appointment.findUniqueOrThrow({
+        where: {
+            id: appointmentId,
+            patientId: patientData.id,
+        },
+        include: {
+            doctor: true,
+            payment : true,
+        }
+    });
+
+    if(!appointmentData){
+        throw new AppError(status.NOT_FOUND, "Appointment not found");
+    }
+
+    if(!appointmentData.payment){
+        throw new AppError(status.NOT_FOUND, "Payment data not found for this appointment");
+    }
+
+    if(appointmentData.payment?.status === PaymentStatus.PAID){
+        throw new AppError(status.BAD_REQUEST, "Payment already completed for this appointment");
+    };
+
+    if(appointmentData.status === AppointmentStatus.CANCELED){
+        throw new AppError(status.BAD_REQUEST, "Appointment is canceled");
+    }
+
+    const session = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        mode: 'payment',
+        line_items: [
+            {
+                price_data: {
+                    currency: "bdt",
+                    product_data: {
+                        name: `Appointment with Dr. ${appointmentData.doctor.name}`,
+                    },
+                    unit_amount: (appointmentData.doctor.appointmentFee ??0) * 100,
+                },
+                quantity: 1,
+            }
+        ],
+        metadata: {
+            appointmentId: appointmentData.id,
+            paymentId: appointmentData.payment.id,
+        },
+
+        success_url: `${envVars.FRONTEND_URL}/dashboard/payment/payment-success?appointment_id=${appointmentData.id}&payment_id=${appointmentData.payment.id}`,
+
+        // cancel_url: `${envVars.FRONTEND_URL}/dashboard/payment/payment-failed`,
+        cancel_url: `${envVars.FRONTEND_URL}/dashboard/appointments?error=payment_cancelled`,
+    })
+
+    return {
+        paymentUrl: session.url,
+    }
+}
+
 const cancelUnpaidAppointments = async () => {
   
 }
