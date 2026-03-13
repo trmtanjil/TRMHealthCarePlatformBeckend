@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import express, { Application, Request, Response } from "express";
  import { IndexRoutes } from "./app/routes";
 import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
@@ -10,7 +11,8 @@ import path from "path";
 import { envVars } from "./app/config/env";
  import qs from "qs"
 import { paymentController } from "./app/module/payment/payment.controller";
-   
+import cron from "node-cron";
+import { AppointmentService } from "./app/module/appointment/appointment.service";
 
 const app:Application = express();
   app.set("query parser",(str:string) =>qs.parse(str))
@@ -36,10 +38,20 @@ app.use(express.urlencoded({ extended: true }));
 
 
 
+
 // Middleware to parse JSON bodies
 app.use(express.json());
 app.use(cookieParser())
 app.use(express.urlencoded({extended:true}))
+
+cron.schedule("*/30 * * * *",async () => {
+  try {
+    console.log("Running cron job to cencel unpaid appoinments....")
+  await AppointmentService.cancelUnpaidAppointments();
+  } catch (error:any) {
+    console.error("Error in cron job:", error);
+  }
+});
 
 app.use("/api/v1", IndexRoutes)
 // Basic route
