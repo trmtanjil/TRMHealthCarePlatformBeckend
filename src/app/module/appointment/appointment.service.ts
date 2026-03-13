@@ -389,6 +389,16 @@ const initiatePayment = async (appointmentId: string, user : IRequestUser) => {
 }
 
 const cancelUnpaidAppointments = async () => {
+  const thirtyMinutes = new Date(Date.now()-30*60*1000);
+
+  const unpaidAppointment = await prisma.appointment.findMany({
+    where:{
+        status:AppointmentStatus.SCHEDULED,
+        createdAt:{
+            lte:thirtyMinutes
+        }
+    }
+  });
   
 }
 
