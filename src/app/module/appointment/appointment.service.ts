@@ -85,7 +85,7 @@ const bookAppointment = async (payload : IBookAppointmentPayload, user : IReques
                         product_data:{
                             name : `Appointment with Dr. ${doctorData.name}`,
                         },
-                       unit_amount: (doctorData.appointmentFee ?? 0) * 120,
+                       unit_amount: (doctorData.appointmentFee ?? 0) * 100,
                     },
                     quantity : 1,
                 }
