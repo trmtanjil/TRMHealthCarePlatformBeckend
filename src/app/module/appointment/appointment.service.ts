@@ -333,8 +333,7 @@ const initiatePayment = async (appointmentId: string, user : IRequestUser) => {
     const appointmentData = await prisma.appointment.findUniqueOrThrow({
         where: {
             id: appointmentId,
-            patientId: patientData.id,
-        },
+         },
         include: {
             doctor: true,
             payment : true,
