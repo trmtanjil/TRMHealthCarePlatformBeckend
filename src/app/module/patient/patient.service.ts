@@ -35,16 +35,37 @@ const updateMyProfile = async(user:IRequestUser,payload:IUpdatePatientProfilePay
                     data:{ ...userData}
                 });
             };
-            if(payload.patientHealthData){
-                const healthDataToSave:IUpdatePatientHealthDataPayload = {
-                    ...payload.patientHealthData,
+        }
+        if(payload.patientHealthData){
+            const healthDataToSave:IUpdatePatientHealthDataPayload = {
+                ...payload.patientHealthData,
+            }
+            if(payload.patientHealthData.dateOfBirth){
+                healthDataToSave.dateOfBirth = convertDateTime(
+                    typeof healthDataToSave.dateOfBirth==='string' ?
+                    healthDataToSave.dateOfBirth : undefined) as Date;
+            };
+            await tx.patientHealthData.upsert({
+                where:{
+                    patientId: patientData.id
+                },
+                update: healthDataToSave,
+                create: {
+                    ...healthDataToSave,
+                    patientId: patientData.id
                 }
-                if(payload.patientHealthData.dateOfBirth){
-                    healthDataToSave.dateOfBirth = convertDateTime(
-                        typeof healthDataToSave.dateOfBirth==='string' ?
-                        healthDataToSave.dateOfBirth : undefined)
+            })
+        }
+        if(payload.medicalReports && Array.isArray(payload.medicalReports) && payload.medicalReports.length > 0){
+            for(const report of payload.medicalReports){
+                if(report.shouldDelete && report.reportId){
+                    await tx.medicalReport.delete({
+                        where: {
+                            id: report.reportId
+                        }
+                    });
                 }
             }
         }
-    })
+    });
 }
