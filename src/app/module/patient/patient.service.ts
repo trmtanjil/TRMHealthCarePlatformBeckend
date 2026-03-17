@@ -1,5 +1,4 @@
-import { he } from "zod/locales";
-import { IRequestUser } from "../../interfaces/requestUser.interface";
+ import { IRequestUser } from "../../interfaces/requestUser.interface";
 import { prisma } from "../../lib/prisma";
 import { IUpdatePatientHealthDataPayload, IUpdatePatientProfilePayload } from "./patient.interface";
 import { convertDateTime } from "./patient.utils";
@@ -15,7 +14,7 @@ const updateMyProfile = async(user:IRequestUser,payload:IUpdatePatientProfilePay
             medicalReports: true
         }
     })
-    const result = await prisma.$transaction(async(tx)=>{
+      const result =  await prisma.$transaction(async(tx)=>{
         if(payload.patientInfo){
             await tx.patient.update({
                 where: {
@@ -64,8 +63,32 @@ const updateMyProfile = async(user:IRequestUser,payload:IUpdatePatientProfilePay
                             id: report.reportId
                         }
                     });
+
+                }else if(report.reportName && report.reportLink){
+                    await tx.medicalReport.create({
+                        data: {
+                            reportName: report.reportName,
+                            reportLink: report.reportLink,
+                            patientId: patientData.id
+                        }
+                    })
                 }
             }
         }
+
+      await tx.patient.findUniqueOrThrow({
+            where:{
+                id:patientData.id
+            },
+            include: {
+                user:true,
+                patientHealthData: true,
+                medicalReports: true
+            }
+        })
     });
+    return result;
+}
+export const patientService = {
+    updateMyProfile
 }
