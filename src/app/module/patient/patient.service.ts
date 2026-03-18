@@ -75,6 +75,7 @@ const updateMyProfile = async(user:IRequestUser,payload:IUpdatePatientProfilePay
                 }
             }
         }
+        await
 
       await tx.patient.findUniqueOrThrow({
             where:{
